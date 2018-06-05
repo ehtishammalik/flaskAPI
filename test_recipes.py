@@ -2,71 +2,71 @@
 import unittest
 import os
 import json
-from app import create_app, db
+from app.init import create_app, db
 
-class BucketlistTestCase(unittest.TestCase):
-    """This class represents the bucketlist test case"""
+class RecipesTestCase(unittest.TestCase):
+    """This class represents the recipes test case"""
 
     def setUp(self):
         """Define test variables and initialize app."""
         self.app = create_app(config_name="testing")
         self.client = self.app.test_client
-        self.bucketlist = {'name': 'Go to Borabora for vacation'}
+        self.recipe = {'name': 'Herby Pan-Seared Chicken'}
 
         # binds the app to the current context
         with self.app.app_context():
             # create all tables
             db.create_all()
 
-    def test_bucketlist_creation(self):
-        """Test API can create a bucketlist (POST request)"""
-        res = self.client().post('/bucketlists/', data=self.bucketlist)
+    def test_recipe_creation(self):
+        """Test API can create a recipe (POST request)"""
+        res = self.client().post('/recipes/', data=self.recipe)
         self.assertEqual(res.status_code, 201)
-        self.assertIn('Go to Borabora', str(res.data))
+        self.assertIn('Herby Pan-Seared', str(res.data))
 
-    def test_api_can_get_all_bucketlists(self):
-        """Test API can get a bucketlist (GET request)."""
-        res = self.client().post('/bucketlists/', data=self.bucketlist)
+    def test_api_can_get_all_recipes(self):
+        """Test API can get a recipes (GET request)."""
+        res = self.client().post('/recipes/', data=self.recipe)
         self.assertEqual(res.status_code, 201)
-        res = self.client().get('/bucketlists/')
+        res = self.client().get('/recipes/')
         self.assertEqual(res.status_code, 200)
-        self.assertIn('Go to Borabora', str(res.data))
+        self.assertIn('Herby Pan-Seared', str(res.data))
 
-    def test_api_can_get_bucketlist_by_id(self):
-        """Test API can get a single bucketlist by using it's id."""
-        rv = self.client().post('/bucketlists/', data=self.bucketlist)
+    def test_api_can_get_recipie_by_id(self):
+        """Test API can get a single recipie by using it's id."""
+        rv = self.client().post('/recipes/', data=self.recipe)
         self.assertEqual(rv.status_code, 201)
         result_in_json = json.loads(rv.data.decode('utf-8').replace("'", "\""))
         result = self.client().get(
-            '/bucketlists/{}'.format(result_in_json['id']))
+            '/recipes/{}'.format(result_in_json['id']))
         self.assertEqual(result.status_code, 200)
-        self.assertIn('Go to Borabora', str(result.data))
+        self.assertIn('Herby Pan-Seared', str(result.data))
 
-    def test_bucketlist_can_be_edited(self):
-        """Test API can edit an existing bucketlist. (PUT request)"""
+    def test_recipe_can_be_edited(self):
+        """Test API can edit an existing recipe. (PUT request)"""
         rv = self.client().post(
-            '/bucketlists/',
-            data={'name': 'Eat, pray and love'})
+            '/recipes/',
+            data={'name': 'Test, Herby Pan-Seared Chicken'})
         self.assertEqual(rv.status_code, 201)
         rv = self.client().put(
-            '/bucketlists/1',
+            '/recipes/1',
             data={
-                "name": "Dont just eat, but also pray and love :-)"
+                "name": "Test recipe, Herby Pan-Seared Chicken "
             })
         self.assertEqual(rv.status_code, 200)
-        results = self.client().get('/bucketlists/1')
-        self.assertIn('Dont just eat', str(results.data))
+        results = self.client().get('/recipes/1')
+        self.assertIn('Test recipe', str(results.data))
 
-    def test_bucketlist_deletion(self):
-        """Test API can delete an existing bucketlist. (DELETE request)."""
+    def test_recipe_deletion(self):
+        """Test API can delete an existing recipe. (DELETE request)."""
         rv = self.client().post(
-            '/bucketlists/',
-            data={'name': 'Eat, pray and love'})
+            '/recipes/',
+            data={'name': 'Test, Herby Pan-Seared Chicken'})
         self.assertEqual(rv.status_code, 201)
-        res = self.client().delete('/bucketlists/1')
+        res = self.client().delete('/recipes/1')
         self.assertEqual(res.status_code, 200)
         # Test to see if it exists, should return a 404
-        result = self.client().get('/bucketlists/1')
+        result = self.client().get('/recipes/1')
         self.assertEqual(result.status_code, 404)
 
     def tearDown(self):
