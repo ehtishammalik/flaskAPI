@@ -39,14 +39,27 @@ You need to know following things before using this api:
 ### What are the return fomats of this api?
 This API currently returns data in [JSON](http://json.org/ "JSON") format.
 
-
-
+### How to change the postgres user and password?
+- First, open instance/config.py edit the line 19. Change the user and password according to your user and password. It look like this: 
+```
+postgresql://user:password@localhost/test_db
+```
+- Now, open .env file in the main directory and edit the line 5. It has same pattern as above.
+```
+postgresql://user:password@localhost/flask_api
+```
 ### How do I use it?
 To use this api you need to follow these steps:
 
 - Download or clone this project into your system.
 - cd into the "flaskAPI-master" directory. This will run the autoenv in your system.
-- if the autoenv doesn't work then run the following commands on your terminal:
+
+- if the autoenv doesn't work then you can run the "commands.sh" file by typing the following command on terminal:
+```
+bash commands.sh
+```
+###Or
+- run the following commands on your terminal:
 ```
 virtualenv apienv
 echo "source `which activate.sh`" >> ~/.bashrc
