@@ -53,6 +53,7 @@ To use this api you need to follow these steps:
 
 - Download or clone this project into your system.
 - cd into the "flaskAPI-master" directory. This will run the autoenv in your system.
+- check the requirements.txt to fulfill all the requirements
 
 - if the autoenv doesn't work then you can run the "commands.sh" file by typing the following command on terminal:
 ```
@@ -66,7 +67,6 @@ echo "source `which activate.sh`" >> ~/.bashrc
 source ~/.bashrc
 source .env
 ```
-- check the requirements.txt to fulfill all the requirements
 - now in your terminal run the following commands to create databases:
 ```
 createdb test_db
