@@ -3,6 +3,7 @@
 from flask_api import FlaskAPI
 from flask_sqlalchemy import SQLAlchemy
 from flask import request, jsonify, abort
+from sqlalchemy.sql import func
 
 # local import
 from instance.config import app_config
@@ -95,20 +96,37 @@ def create_app(config_name):
                 'name': recipe.name,
                 'prep_time': recipe.prep_time,
                 'difficulty': recipe.difficulty,
-                'vegetarian': recipe.vegetarian
+                'vegetarian': recipe.vegetarian,
+                'rating' : recipe.rating
             })
             response.status_code = 200
             return response
 
-    @app.route('/recipes/<int:id>/rating', methods=['GET', 'PUT', 'DELETE'])
-    def recipe_rating(id, rating):
-        # retrieve a recipe using it's ID
+    @app.route('/recipes/<int:id>/rating', methods=['PUT'])
+    def recipe_rating(id):
+        data = request.get_json()
+        rating = data['rating']
+        print(rating)
         recipe = Recipes.query.filter_by(id=id).first()
         if not recipe:
             # Raise an HTTPException with a 404 not found status code
             abort(404)
         else:
-            recipe.session
-
+            recipe.rating_numbering = int(recipe.rating_numbering) + 1
+            print(recipe.rating_numbering)
+            print((int(recipe.rating) + int(rating)))
+            recipe.rating = (int(recipe.rating) + int(rating)) / 2
+            print(recipe.rating)
+            recipe.save()
+            response = jsonify({
+                'id': recipe.id,
+                'name': recipe.name,
+                'prep_time': recipe.prep_time,
+                'difficulty': recipe.difficulty,
+                'vegetarian': recipe.vegetarian,
+                'rating': recipe.rating
+            })
+            response.status_code = 201
+            return response
 
     return app
