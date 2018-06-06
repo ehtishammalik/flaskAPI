@@ -2,7 +2,7 @@
 import unittest
 import os
 import json
-from app.init import create_app, db
+from app import create_app, db
 
 class RecipesTestCase(unittest.TestCase):
     """This class represents the recipes test case"""

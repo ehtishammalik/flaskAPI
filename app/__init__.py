@@ -10,10 +10,12 @@ from instance.config import app_config
 # initialize sql-alchemy
 db = SQLAlchemy()
 
+
 def create_app(config_name):
     from app.models import Recipes
+
     app = FlaskAPI(__name__, instance_relative_config=True)
-    app.config.from_object(app_config[config_name])
+    app.config.from_object(app_config['development'])
     app.config.from_pyfile('config.py')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     db.init_app(app)
@@ -21,21 +23,29 @@ def create_app(config_name):
     @app.route('/recipes/', methods=['POST', 'GET'])
     def recipes():
         if request.method == "POST":
-            name = str(request.data.get('name', ''))
-            if name:
+            data = request.get_json()
+            recipe_name = data['name']
+            recipe = Recipes.query.filter_by(name=recipe_name).first()
 
-                recipe = Recipes(name=name)
-                recipe.save()
+            if not recipe:
+                new_recipe = Recipes(name=data['name'], prep_time=data['prep_time'], difficulty=data['difficulty'],
+                                     vegetarian=data['vegetarian'], rating=data['rating'])
+                new_recipe.rating_numbering = 1
+                new_recipe.save()
                 response = jsonify({
-                    'id': recipe.id,
-                    'name': recipe.name,
-                    'prep_time': recipe.prep_time,
-                    'difficulty': recipe.difficulty,
-                    'vegetarian': recipe.vegetarian
+                    'id': new_recipe.id,
+                    'name': new_recipe.name,
+                    'prep_time': new_recipe.prep_time,
+                    'difficulty': new_recipe.difficulty,
+                    'vegetarian': new_recipe.vegetarian,
+                    'rating': new_recipe.rating
                 })
                 response.status_code = 201
                 return response
-
+            else:
+                response = jsonify({'message': 'recipie already exist'})
+                response.status_code = 304
+                return response
         else:
             # GET
             recipes = Recipes.get_all()
@@ -43,15 +53,13 @@ def create_app(config_name):
 
             for recipe in recipes:
                 obj = {
-                'id': recipe.id,
-                'name': recipe.name,
-                'prep_time': recipe.prep_time,
-                'difficulty': recipe.difficulty,
-                'vegetarian': recipe.vegetarian
-            }
-            results.append(obj)
-
-
+                    'id': recipe.id,
+                    'name': recipe.name,
+                    'prep_time': recipe.prep_time,
+                    'difficulty': recipe.difficulty,
+                    'vegetarian': recipe.vegetarian
+                }
+                results.append(obj)
             response = jsonify(results)
             response.status_code = 200
             return response
@@ -71,16 +79,13 @@ def create_app(config_name):
                    }, 200
 
         elif request.method == 'PUT':
-            name = str(request.data.get('name', ''))
-            recipe.name = name
-            recipe.save()
-            response = jsonify({
-                'id': recipe.id,
-                'name': recipe.name,
-                'prep_time': recipe.prep_time,
-                'difficulty': recipe.difficulty,
-                'vegetarian': recipe.vegetarian
-            })
+            recipe = Recipes.query.filter_by(id=id).first()
+            if not recipe:
+                return jsonify({'message': 'No user found!'})
+
+            recipe.admin = True
+            db.session.commit()
+            response = jsonify(recipe)
             response.status_code = 200
             return response
         else:
@@ -94,5 +99,16 @@ def create_app(config_name):
             })
             response.status_code = 200
             return response
+
+    @app.route('/recipes/<int:id>/rating', methods=['GET', 'PUT', 'DELETE'])
+    def recipe_rating(id, rating):
+        # retrieve a recipe using it's ID
+        recipe = Recipes.query.filter_by(id=id).first()
+        if not recipe:
+            # Raise an HTTPException with a 404 not found status code
+            abort(404)
+        else:
+            recipe.session
+
 
     return app
