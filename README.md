@@ -39,6 +39,8 @@ You need to know following things before using this api:
 ### What are the return fomats of this api?
 This API currently returns data in [JSON](http://json.org/ "JSON") format.
 
+
+
 ### How do I use it?
 To use this api you need to follow these steps:
 
@@ -46,6 +48,7 @@ To use this api you need to follow these steps:
 - cd into the "flaskAPI-master" directory. This will run the autoenv in your system.
 - if the autoenv doesn't work then run the following commands on your terminal:
 ```
+virtualenv apienv
 echo "source `which activate.sh`" >> ~/.bashrc
 source ~/.bashrc
 source .env
