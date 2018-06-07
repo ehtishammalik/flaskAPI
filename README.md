@@ -63,18 +63,19 @@ To use this api you need to follow these steps:
 - run the following commands on your terminal:
 ```
 sudo pip3 install virtualenv
-sudo pip install autoenv
-virtualenv apienv
+sudo pip3 install autoenv
+virtualenv -p python3 apienv
 source apienv/bin/activate
+```
+
+- to install requirements manually run the following command:
+```
+pip3 install -r requirements.txt
 ```
 - now in your terminal run the following commands to create databases:
 ```
 createdb test_db
 createdb flask_api
-```
-- to install requirements manually run the following command:
-```
-sudo pip install -r requirements.txt
 ```
 - now to migrate the models run the following commands in your terminal
 ```
