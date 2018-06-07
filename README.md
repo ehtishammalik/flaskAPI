@@ -55,11 +55,11 @@ To use this api you need to follow these steps:
 - cd into the "flaskAPI-master" directory. This will run the autoenv in your system.
 - check the requirements.txt to fulfill all the requirements. To auto install all the requirements run the bash command mentioned below.
 
-- if the autoenv doesn't work then you can run the "commands.sh" file by typing the following command on terminal:
+- execute the "commands.sh" file by typing the following command on terminal to install all requirements:
 ```
 . commands.sh
 ```
-###Or
+### Or
 - run the following commands on your terminal:
 ```
 sudo pip3 install virtualenv
